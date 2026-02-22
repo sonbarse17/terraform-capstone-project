@@ -3,7 +3,7 @@ variable "notebook_name" {
 }
 
 variable "instance_type" {
-  type = string
+  type    = string
   default = "ml.t3.medium"
 }
 

@@ -5,7 +5,7 @@ variable "region" {
 ## VPC
 
 variable "vpc_cidr" {
-
+  type = string
 }
 
 variable "public_subnets" {
@@ -31,10 +31,10 @@ variable "instance_type" {
 }
 
 variable "project" {
-  
+  type = string
 }
 variable "environment" {
-  
+  type = string
 }
 variable "key_name" {
   type = string

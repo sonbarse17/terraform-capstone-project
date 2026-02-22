@@ -1,12 +1,9 @@
 locals {
-
   name = "${var.project}-${var.environment}"
 
   rg_name = "${local.name}-rg"
 
-  vnet_name           = "${local.name}-vnet"
-  public_subnet_name  = "${local.name}-public-subnet"
-  private_subnet_name = "${local.name}-private-subnet"
+  vnet_name = "${local.name}-vnet"
 
   vm_name  = "${local.name}-vm"
   aks_name = "${local.name}-aks"

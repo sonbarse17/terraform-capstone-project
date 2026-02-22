@@ -3,17 +3,17 @@ variable "repository_name" {
 }
 
 variable "image_tag_mutability" {
-  type = string
+  type    = string
   default = "IMMUTABLE"
 }
 
 variable "scan_on_push" {
-  type = bool
+  type    = bool
   default = true
 }
 
 variable "max_image_count" {
-  type = number
+  type    = number
   default = 10
 }
 

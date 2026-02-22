@@ -31,16 +31,17 @@ module "sg" {
 }
 
 module "ec2" {
-  source              = "./modules/ec2"
-  instance_name       = local.ec2_instance_name
-  ami_id              = var.ami_id
-  instance_type       = var.instance_type
-  subnet_id           = module.vpc.public_subnets_ids[0]
-  associate_public_ip = var.associate_public_ip
-  security_group_ids  = [module.sg.security_group_ids]
-  key_name            = var.key_name
-  user_data           = var.user_data
-  tags                = local.tags
+  source               = "./modules/ec2"
+  instance_name        = local.ec2_instance_name
+  ami_id               = var.ami_id
+  instance_type        = var.instance_type
+  subnet_id            = module.vpc.public_subnets_ids[0]
+  associate_public_ip  = var.associate_public_ip
+  security_group_ids   = [module.sg.security_group_ids]
+  key_name             = var.key_name
+  iam_instance_profile = module.iam.instance_profile_name
+  user_data            = var.user_data
+  tags                 = local.tags
 }
 
 locals {
@@ -71,7 +72,7 @@ locals {
     Statement = [{
       Effect    = "Allow"
       Principal = { Service = "ec2.amazonaws.com" }
-      Action    = "sts.AssumeRole"
+      Action    = "sts:AssumeRole"
     }]
   })
 
@@ -107,13 +108,16 @@ module "iam" {
       {
         Effect = "Allow"
         Action = [
-          "s3:GetObject",
           "s3:ListBucket"
         ]
-        Resource = [
-          module.s3.bucket_arn,
-          "${module.s3.bucket_arn}/*"
+        Resource = module.s3.bucket_arn
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject"
         ]
+        Resource = "${module.s3.bucket_arn}/*"
       }
     ]
   })
@@ -121,9 +125,12 @@ module "iam" {
 }
 
 module "ecr" {
-  source          = "./modules/ecr"
-  repository_name = local.ecr_repo_name
-  tags            = local.tags
+  source               = "./modules/ecr"
+  repository_name      = local.ecr_repo_name
+  image_tag_mutability = var.image_tag_mutability
+  scan_on_push         = var.scan_on_push
+  max_image_count      = var.max_image_count
+  tags                 = local.tags
 }
 
 module "iam_eks_cluster" {
@@ -261,10 +268,16 @@ module "iam_sagemaker" {
         Effect = "Allow"
         Action = [
           "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListObject"
+          "s3:PutObject"
         ]
-        Resource = [module.s3.bucket_arn, "${module.s3.bucket_arn}/*"]
+        Resource = "${module.s3.bucket_arn}/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "s3:ListBucket"
+        ]
+        Resource = module.s3.bucket_arn
       },
       {
         Effect = "Allow"
@@ -278,7 +291,7 @@ module "iam_sagemaker" {
       {
         Effect = "Allow"
         Action = [
-          "logs:CreatLogGroup",
+          "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]

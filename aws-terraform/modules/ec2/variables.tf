@@ -3,7 +3,7 @@ variable "instance_name" {
 }
 
 variable "ami_id" {
- type = string
+  type = string
 }
 
 variable "instance_type" {
@@ -23,12 +23,17 @@ variable "key_name" {
   type = string
 }
 
+variable "iam_instance_profile" {
+  type    = string
+  default = null
+}
+
 variable "associate_public_ip" {
   type = bool
 }
 
 variable "user_data" {
-  type = string
+  type    = string
   default = null
 }
 

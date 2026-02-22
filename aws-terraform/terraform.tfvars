@@ -1,5 +1,5 @@
-region = "ap-south-1"
-project = "Capstone"
+region      = "ap-south-1"
+project     = "Capstone"
 environment = "dev"
 
 ## VPC

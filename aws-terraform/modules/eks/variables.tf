@@ -19,8 +19,8 @@ variable "security_group_ids" {
 }
 
 variable "node_instance_types" {
-  type = list(string)
-  default = [ "t3.medium" ]
+  type    = list(string)
+  default = ["t3.medium"]
 }
 
 variable "desired_size" {
