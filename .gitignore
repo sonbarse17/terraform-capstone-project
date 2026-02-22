@@ -8,6 +8,8 @@ crash.*.log
 *.tfvars
 *.tfvars.json
 *.tfplan
+*.backend.hcl
+backend.hcl
 override.tf
 override.tf.json
 *_override.tf

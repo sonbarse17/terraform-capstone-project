@@ -1,0 +1,8 @@
+# Copy to backend.hcl and replace with real values.
+resource_group_name  = "rg-terraform-state"
+storage_account_name = "tfstateaccount"
+container_name       = "tfstate"
+key                  = "azure-capstone/terraform.tfstate"
+
+# Optional if not already set in your Azure context/env vars:
+# subscription_id     = "00000000-0000-0000-0000-000000000000"

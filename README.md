@@ -17,6 +17,8 @@ Terraform infrastructure for both AWS and Azure, organized as two independent st
 .
 ├── README.md
 ├── aws-terraform
+│   ├── backend.tf
+│   ├── backend.hcl.example
 │   ├── main.tf
 │   ├── providers.tf
 │   ├── variables.tf
@@ -33,6 +35,8 @@ Terraform infrastructure for both AWS and Azure, organized as two independent st
 │       ├── security-group
 │       └── vpc
 ├── azure-terraform
+│   ├── backend.tf
+│   ├── backend.hcl.example
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── locals.tf
@@ -74,6 +78,24 @@ Use one of these methods before running Terraform:
 
 `azure-terraform` supports `subscription_id` as an input variable. If unset (`null`), provider context can come from your Azure auth/session.
 
+## Remote State Setup
+
+Both stacks are configured to use remote backends:
+
+- AWS: S3 backend (`aws-terraform/backend.tf`)
+- Azure: Azure Blob backend (`azure-terraform/backend.tf`)
+
+For AWS, the backend template uses native S3 lockfile locking (`use_lockfile = true`), so DynamoDB locking is not required.
+
+Initialize backend configuration files:
+
+```bash
+cp aws-terraform/backend.hcl.example aws-terraform/backend.hcl
+cp azure-terraform/backend.hcl.example azure-terraform/backend.hcl
+```
+
+Edit those files with real backend values before `terraform init`.
+
 ## Quick Start
 
 Run stacks independently from repo root.
@@ -81,7 +103,7 @@ Run stacks independently from repo root.
 ### 1. AWS Stack
 
 ```bash
-terraform -chdir=aws-terraform init
+terraform -chdir=aws-terraform init -backend-config=backend.hcl
 terraform -chdir=aws-terraform plan
 terraform -chdir=aws-terraform apply
 ```
@@ -97,7 +119,7 @@ Important before apply:
 ### 2. Azure Stack
 
 ```bash
-terraform -chdir=azure-terraform init
+terraform -chdir=azure-terraform init -backend-config=backend.hcl
 terraform -chdir=azure-terraform plan
 terraform -chdir=azure-terraform apply
 ```
@@ -140,6 +162,6 @@ terraform -chdir=azure-terraform destroy
 
 ## Notes
 
-- State is currently local (no remote backend configured).
+- Remote backend blocks are configured; backend credentials/config values are supplied via `backend.hcl`.
 - Keep secrets out of `*.tfvars` in shared repositories.
 - Current Terraform variables in both stacks are intended for a dev environment baseline and should be reviewed for production use.
